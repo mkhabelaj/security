@@ -1,7 +1,6 @@
 from observer.observer import Publisher
 import select
 import psycopg2
-import json
 
 
 class DatabaseRelay(Publisher):
