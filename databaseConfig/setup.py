@@ -104,8 +104,9 @@ class PSQLDatabaseSetup:
             function_name=self.function_name,
             table=self.table,
         )
-        self.execute_sql(query_string_drop_function, "Dropping function")
         self.execute_sql(query_string_drop_trigger, "Dropping trigger")
+        self.execute_sql(query_string_drop_function, "Dropping function")
+
 
     def execute_sql(self, statement, logging_info="Executing sql statement"):
         print('{logging_info}'.format(logging_info=logging_info))
