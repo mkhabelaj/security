@@ -1,11 +1,16 @@
+import threading
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
+import sys
 import json
 import subprocess
 from psql_observer import DatabaseRelay
 from observer.subscriber import Subscriber
 from databaseConfig.databaseTableNotifer import PSQLDatabaseSetup
+from customCamera import CustomCamera
+
 
 DATABASE_NAME = 'cam_config'
 TABLE_NAME = 'config'
@@ -37,18 +42,20 @@ class Test(Subscriber):
     def update(self, message):
         print('Test', message)
 
-#
-# class TestOne(Subscriber):
-#     def update(self, message):
-#         print('TestOne', message)
-#
-#
+
 test = Test()
-# testO = TestOne()
+customCam = CustomCamera(0, **CAMERA_SETTINGS)
+
 database_relay = DatabaseRelay(DATABASE_NAME, USER, channel=CHANNEL)
-#
+
 database_relay.subscribe('database_updates', test)
-# database_relay.subscribe('database_updates', testO)
-#
-database_relay.listen_to_database_changes()
+database_relay.subscribe('database_updates', customCam)
+
+thread = threading.Thread(target=database_relay.listen_to_database_changes, args=())
+# thread.daemon = True                            # Daemonize thread
+thread.start()
+
+customCam.initialise_camera()
+
+
 
