@@ -1,30 +1,54 @@
 import psycopg2
-
+from psycopg2.extras import RealDictCursor
+import os
+import json
+import subprocess
 from psql_observer import DatabaseRelay
 from observer.subscriber import Subscriber
 from databaseConfig.databaseTableNotifer import PSQLDatabaseSetup
 
-conn = psycopg2.connect(user='jackson', database='testdb', password='password')
-print(conn)
-tOne = PSQLDatabaseSetup(conn, 'products', 'events', drop_if_exists=True)
+DATABASE_NAME = 'cam_config'
+TABLE_NAME = 'config'
+PASSWORD = 'password'
+USER = os.environ['USER']
+CHANNEL = 'events'
 
-tOne.create_notify_event()
-# class Test(Subscriber):
-#     def update(self, message):
-#         print('Test', message)
-#
+# Create database and config table
+subprocess.check_call(['databaseConfig/setup.sh', DATABASE_NAME, PASSWORD])
+
+conn = psycopg2.connect(user=USER, database=DATABASE_NAME, password=PASSWORD)
+cur = conn.cursor(cursor_factory=RealDictCursor)
+cur.execute('select * from {table} LIMIT 1;'.format(table=TABLE_NAME))
+
+# Fetch a dictionary with the database configurations
+CAMERA_SETTINGS = cur.fetchone()
+
+databaseChannel = PSQLDatabaseSetup(
+    connection=conn,
+    database_table=TABLE_NAME,
+    channel=CHANNEL
+)
+
+# Setup notification event on the table
+databaseChannel.create_notify_event()
+
+
+class Test(Subscriber):
+    def update(self, message):
+        print('Test', message)
+
 #
 # class TestOne(Subscriber):
 #     def update(self, message):
 #         print('TestOne', message)
 #
 #
-# test = Test()
+test = Test()
 # testO = TestOne()
-# database_relay = DatabaseRelay('testdb', 'jackson', channel='events')
+database_relay = DatabaseRelay(DATABASE_NAME, USER, channel=CHANNEL)
 #
-# database_relay.subscribe('database_updates', test)
+database_relay.subscribe('database_updates', test)
 # database_relay.subscribe('database_updates', testO)
 #
-# database_relay.listen_to_database_changes()
+database_relay.listen_to_database_changes()
 

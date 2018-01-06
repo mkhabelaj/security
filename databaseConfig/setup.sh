@@ -39,6 +39,5 @@ else
 fi
 
 echo "Setup Database ${DATABASE} complete";
-exit 1;
 
 

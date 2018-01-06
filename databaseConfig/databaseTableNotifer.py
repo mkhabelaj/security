@@ -51,7 +51,7 @@ class PSQLDatabaseSetup:
         
         
                 -- Execute pg_notify(channel, notification)
-                PERFORM pg_notify({channel},notification::text);
+                PERFORM pg_notify('{channel}',notification::text);
         
                 -- Result is ignored since this is an AFTER trigger
                 RETURN NULL;
@@ -67,7 +67,7 @@ class PSQLDatabaseSetup:
             print("{function} function already exists".format(function=self.function_name))
         else:
             print("Function does not exist")
-            self.execute_sql(query_string_create_function,"creating {function} function".format(
+            self.execute_sql(query_string_create_function, "creating {function} function".format(
                 function=self.function_name
             ))
 
@@ -93,6 +93,7 @@ class PSQLDatabaseSetup:
         else:
             print('Trigger doest not exist')
             self.execute_sql(query_create_trigger, "creating trigger....")
+        self.conn.commit()
 
     def drop_function_trigger(self):
         print("Dropping function {function_name} and trigger {table}_{function_name} if exists".format(
