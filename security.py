@@ -2,13 +2,13 @@ import psycopg2
 
 from psql_observer import DatabaseRelay
 from observer.subscriber import Subscriber
-from databaseConfig.setup import PSQLDatabaseSetup
+from databaseConfig.databaseTableNotifer import PSQLDatabaseSetup
 
 conn = psycopg2.connect(user='jackson', database='testdb', password='password')
 print(conn)
 tOne = PSQLDatabaseSetup(conn, 'products', 'events', drop_if_exists=True)
 
-tOne.create_notify_event();
+tOne.create_notify_event()
 # class Test(Subscriber):
 #     def update(self, message):
 #         print('Test', message)

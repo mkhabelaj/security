@@ -1,9 +1,9 @@
-import psycopg2
-
-
 class PSQLDatabaseSetup:
     def __init__(self, connection, database_table, channel, function_name='notify_event', drop_if_exists=False):
         """
+        Creates a notify event channel on the database for the specified table
+        Any update, delete or insert statement will be broadcast on the specified
+        channel
         :param connection psycopg2.connection:
         :param database_table:
         :param channel:
