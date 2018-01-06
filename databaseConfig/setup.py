@@ -100,13 +100,12 @@ class PSQLDatabaseSetup:
             table=self.table,
         ))
         query_string_drop_function = "DROP FUNCTION IF EXISTS {function_name};".format(function_name=self.function_name)
-        query_string_drop_trigger="DROP TRIGGER {table}_{function_name} ON {table}".format(
+        query_string_drop_trigger = "DROP TRIGGER {table}_{function_name} ON {table}".format(
             function_name=self.function_name,
             table=self.table,
         )
         self.execute_sql(query_string_drop_trigger, "Dropping trigger")
         self.execute_sql(query_string_drop_function, "Dropping function")
-
 
     def execute_sql(self, statement, logging_info="Executing sql statement"):
         print('{logging_info}'.format(logging_info=logging_info))
