@@ -22,6 +22,8 @@ function create_config_table() {
 if  type psql >/dev/null 2>&1 ;
 then
     echo 'POSTGRES is installed';
+    # creating Database
+    sudo -u ${USER} createdb ${DATABASE};
     echo 'creating the config table .....';
     create_config_table ${DATABASE};
 else

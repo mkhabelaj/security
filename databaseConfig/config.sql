@@ -1,4 +1,4 @@
-create table config(
+CREATE TABLE IF NOT EXISTS config(
     show_video INTEGER DEFAULT 1 NOT NULL,
     record_motion INTEGER DEFAULT 0 NOT NULL,
     min_upload_seconds INTEGER,
