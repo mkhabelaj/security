@@ -51,8 +51,10 @@ database_relay = DatabaseRelay(DATABASE_NAME, USER, channel=CHANNEL)
 database_relay.subscribe('database_updates', test)
 database_relay.subscribe('database_updates', customCam)
 
+# Listen to database changes on a separate thread
 thread = threading.Thread(target=database_relay.listen_to_database_changes, args=())
-# thread.daemon = True                            # Daemonize thread
+# dies when main thread dies
+thread.daemon = True
 thread.start()
 
 customCam.initialise_camera()

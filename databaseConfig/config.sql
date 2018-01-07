@@ -18,4 +18,4 @@ INSERT INTO config (
   delta_thresh,
   min_email_seconds,
   min_area)
-VALUES (1,1,5,3,5000);
+VALUES (1 ,1, 5, 3, 5000);

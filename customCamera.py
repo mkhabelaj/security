@@ -1,5 +1,6 @@
 from camera.camera import Camera
 from observer.subscriber import Subscriber
+import json
 
 
 class CustomCamera(Camera, Subscriber):
@@ -13,6 +14,7 @@ class CustomCamera(Camera, Subscriber):
         )
 
     def update(self, message):
+        message = json.loads(message)
         data = message['data']
         self.show_video = data.get('show_video')
         self.delta_thresh = data.get('delta_thresh')
@@ -23,4 +25,3 @@ class CustomCamera(Camera, Subscriber):
         self.motion_detection = data.get('motion_detection')
         self.display_text_if_occupied = data.get('display_text_if_occupied')
         self.display_text_if_unoccupied = data.get('display_text_if_unoccupied')
-        # Setting up video self.capture
