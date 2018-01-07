@@ -11,12 +11,14 @@ from observer.subscriber import Subscriber
 from databaseConfig.databaseTableNotifer import PSQLDatabaseSetup
 from customCamera import CustomCamera
 
-
 DATABASE_NAME = 'cam_config'
 TABLE_NAME = 'config'
 PASSWORD = 'password'
 USER = os.environ['USER']
 CHANNEL = 'events'
+
+# get a list of camera positions
+camera_positions = CustomCamera.count_system_cameras()
 
 # Create database and config table
 subprocess.check_call(['databaseConfig/setup.sh', DATABASE_NAME, PASSWORD])
