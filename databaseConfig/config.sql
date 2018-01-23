@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS config;
+
 CREATE TABLE IF NOT EXISTS config(
     show_video BOOLEAN NOT NULL DEFAULT FALSE,
     record_motion BOOLEAN NOT NULL DEFAULT FALSE,
@@ -19,3 +21,14 @@ INSERT INTO config (
   min_email_seconds,
   min_area)
 VALUES (1 ,1, 5, 3, 5000);
+
+DROP TABLE IF EXISTS port_map;
+
+CREATE TABLE IF NOT EXISTS port_map(
+  camera_name VARCHAR(255) NOT NULL,
+  camera_number INTEGER NOT NULL,
+  socket_server_port INTEGER NOT NULL ,
+  websocket_server_port INTEGER NOT NULL ,
+  stream_secret VARCHAR(255) NOT NULL
+
+);
