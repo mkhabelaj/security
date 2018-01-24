@@ -5,13 +5,25 @@ import json
 
 class CustomCamera(Camera, Subscriber):
 
-    def __init__(self, camera_number, display_on_web=False, *args, **kwargs):
+    def __init__(self,
+                 camera_number,
+                 stream_port=0,
+                 web_socket_port=0,
+                 stream_secret='',
+                 initialize_stream=False,
+                 *args,
+                 **kwargs
+                 ):
         super(CustomCamera, self).__init__(
             camera_number,
-            display_on_web,
+            initialize_stream=initialize_stream,
+            stream_port=stream_port,
             *args,
             **kwargs
         )
+
+        self.web_socket_port = web_socket_port
+        self.stream_secret = stream_secret
 
     def update(self, message):
         message = json.loads(message)

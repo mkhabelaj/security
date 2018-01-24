@@ -10,6 +10,9 @@ from psql_observer import DatabaseRelay
 from observer.subscriber import Subscriber
 from databaseConfig.databaseTableNotifer import PSQLDatabaseSetup
 from customCamera import CustomCamera
+from randgen.portgen.generator import PortGenerator
+from randgen.stringgen.generator import StringGenerator
+import time
 
 DATABASE_NAME = 'cam_config'
 TABLE_NAME = 'config'
@@ -39,19 +42,37 @@ databaseChannel = PSQLDatabaseSetup(
 # Setup notification event on the table
 databaseChannel.create_notify_event()
 
-
-class Test(Subscriber):
-    def update(self, message):
-        print('Test', message)
-
-
-test = Test()
-customCam = CustomCamera(0, **CAMERA_SETTINGS)
-
+# initialize database observer
 database_relay = DatabaseRelay(DATABASE_NAME, USER, channel=CHANNEL)
 
-database_relay.subscribe('database_updates', test)
-database_relay.subscribe('database_updates', customCam)
+# initialize generators
+string_generator = StringGenerator()
+port_generator = PortGenerator(number_of_ports=2)
+
+# list of camera objects
+camera_objects = []
+
+for n in camera_positions:
+    stream_secret = string_generator.produce_strings()
+    ports = port_generator.produce_ports()
+    cur.execute("INSERT INTO port_map VALUES ({camera_number},{socket_server_port},{web_socket_server_port},'{stream_secret}');".format(
+        camera_number=n,
+        socket_server_port=ports[0],
+        web_socket_server_port=ports[1],
+        stream_secret=stream_secret
+    ))
+    conn.commit()
+    # create camera object for each camera
+    camera = CustomCamera(
+        camera_number=n,
+        stream_port=ports[0],
+        web_socket_port=ports[1],
+        stream_secret=stream_secret,
+        **CAMERA_SETTINGS
+    )
+    camera_objects.append(camera)
+    # subscribe each camera to database events
+    database_relay.subscribe('database_updates', camera)
 
 # Listen to database changes on a separate thread
 thread = threading.Thread(target=database_relay.listen_to_database_changes, args=())
@@ -59,7 +80,17 @@ thread = threading.Thread(target=database_relay.listen_to_database_changes, args
 thread.daemon = True
 thread.start()
 
-customCam.initialise_camera()
+main_cam = camera_objects.pop(0)
+
+# initiate all cameras
+for cam in camera_objects:
+    thread_cam = threading.Thread(target=cam.initialise_camera, args=())
+    thread_cam.setDaemon(True)
+    thread_cam.start()
+    time.sleep(10)
+
+main_cam.initialise_camera()
+
 
 
 
