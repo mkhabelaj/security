@@ -73,6 +73,7 @@ for n in camera_positions:
     camera_objects.append(camera)
     # subscribe each camera to database events
     database_relay.subscribe('database_updates', camera)
+    # set up web socket server
 
 # Listen to database changes on a separate thread
 thread = threading.Thread(target=database_relay.listen_to_database_changes, args=())
