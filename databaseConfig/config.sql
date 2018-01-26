@@ -28,5 +28,6 @@ CREATE TABLE IF NOT EXISTS port_map(
   camera_number INTEGER NOT NULL,
   socket_server_port INTEGER NOT NULL ,
   websocket_server_port INTEGER NOT NULL ,
-  stream_secret VARCHAR(255) NOT NULL
+  stream_secret VARCHAR(255) NOT NULL,
+  ip_address VARCHAR(255) NOT NULL DEFAULT 'localhost'
 );

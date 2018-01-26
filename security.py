@@ -20,6 +20,10 @@ PASSWORD = 'password'
 USER = os.environ['USER']
 CHANNEL = 'events'
 
+# Get current ip from wifi
+f = os.popen('ifconfig wlan0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
+CURRENT_IP = f.read()
+CURRENT_IP = CURRENT_IP[:-1]
 # get a list of camera positions
 camera_positions = CustomCamera.count_system_cameras()
 
@@ -55,12 +59,16 @@ camera_objects = []
 for n in camera_positions:
     stream_secret = string_generator.produce_strings()
     ports = port_generator.produce_ports()
-    cur.execute("INSERT INTO port_map VALUES ({camera_number},{socket_server_port},{web_socket_server_port},'{stream_secret}');".format(
-        camera_number=n,
-        socket_server_port=ports[0],
-        web_socket_server_port=ports[1],
-        stream_secret=stream_secret
-    ))
+    cur.execute(
+        "INSERT INTO port_map VALUES "
+        "({camera_number},{socket_server_port},{web_socket_server_port},'{stream_secret}','{ip_address}');".format(
+            camera_number=n,
+            socket_server_port=ports[0],
+            web_socket_server_port=ports[1],
+            stream_secret=stream_secret,
+            ip_address=CURRENT_IP
+        )
+    )
     conn.commit()
     subprocess.check_call(
         ['./initiate_screen.sh', stream_secret, stream_secret, str(ports[0]), 'security', str(ports[1]), stream_secret])
