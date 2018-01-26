@@ -62,18 +62,23 @@ for n in camera_positions:
         stream_secret=stream_secret
     ))
     conn.commit()
+    subprocess.check_call(
+        ['./initiate_screen.sh', stream_secret, stream_secret, str(ports[0]), 'security', str(ports[1]), stream_secret])
+    time.sleep(5)
     # create camera object for each camera
     camera = CustomCamera(
         camera_number=n,
         stream_port=ports[0],
         web_socket_port=ports[1],
         stream_secret=stream_secret,
+        initialize_stream=True,
         **CAMERA_SETTINGS
     )
     camera_objects.append(camera)
     # subscribe each camera to database events
     database_relay.subscribe('database_updates', camera)
     # set up web socket server
+
 
 # Listen to database changes on a separate thread
 thread = threading.Thread(target=database_relay.listen_to_database_changes, args=())
@@ -88,7 +93,7 @@ for cam in camera_objects:
     thread_cam = threading.Thread(target=cam.initialise_camera, args=())
     thread_cam.setDaemon(True)
     thread_cam.start()
-    time.sleep(10)
+
 
 main_cam.initialise_camera()
 
