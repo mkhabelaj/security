@@ -3,11 +3,8 @@ import threading
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
-import sys
-import json
 import subprocess
 from psql_observer import DatabaseRelay
-from observer.subscriber import Subscriber
 from databaseConfig.databaseTableNotifer import PSQLDatabaseSetup
 from customCamera import CustomCamera
 from randgen.portgen.generator import PortGenerator
