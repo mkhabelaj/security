@@ -1,5 +1,5 @@
 # security
-## As system that uses multiple camera's as a motion sensor
+## A system that uses multiple camera's as a motion sensor
 #### The purpose of this project is create a motion sensor security system out of normal webcams.
 
 #### Required custom Python packages
