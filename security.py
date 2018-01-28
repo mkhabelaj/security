@@ -1,5 +1,4 @@
 import threading
-
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
@@ -20,7 +19,8 @@ CHANNEL = 'events'
 # Get current ip from wifi
 f = os.popen('ifconfig wlan0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
 CURRENT_IP = f.read()
-CURRENT_IP = CURRENT_IP[:-1]
+CURRENT_IP = CURRENT_IP[:-1] if CURRENT_IP else 'localhost'
+
 # get a list of camera positions
 camera_positions = CustomCamera.count_system_cameras()
 
