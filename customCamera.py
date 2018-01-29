@@ -37,3 +37,5 @@ class CustomCamera(Camera, Subscriber):
         self.motion_detection = data.get('motion_detection')
         self.display_text_if_occupied = data.get('display_text_if_occupied')
         self.display_text_if_unoccupied = data.get('display_text_if_unoccupied')
+        self.resolution_width = data.get('resolution_width')
+        self.resolution_height = data.get('resolution_height')
