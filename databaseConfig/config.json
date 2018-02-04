@@ -1,0 +1,15 @@
+{
+  "show_video": "false",
+  "record_motion": "false",
+  "min_upload_seconds": 1,
+  "min_motion_frames": 1,
+  "delta_thresh": 5,
+  "motion_detection": "true",
+  "min_email_seconds": 3,
+  "email_images": "false",
+  "min_area": 5000,
+  "resolution_width": 640,
+  "resolution_height": 480,
+  "display_text_if_occupied": "Occupied",
+  "display_text_if_unoccupied": "Unoccupied"
+}
