@@ -1,3 +1,4 @@
+import json
 import threading
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -9,6 +10,21 @@ from customCamera import CustomCamera
 from randgen.portgen.generator import PortGenerator
 from randgen.stringgen.generator import StringGenerator
 import time
+
+
+def create_value_string(list_item):
+    value = []
+    for item in list_item:
+        if isinstance(item, (int, float)):
+            value.append(item)
+        else:
+            value.append(wrap_with_quotes(item))
+    values = ','.join(str(v) for v in value)
+    return values
+
+
+def wrap_with_quotes(x):
+    return "'%s'" % x
 
 DATABASE_NAME = 'cam_config'
 TABLE_NAME = 'config'
@@ -29,10 +45,9 @@ subprocess.check_call(['databaseConfig/setup.sh', DATABASE_NAME, PASSWORD])
 
 conn = psycopg2.connect(user=USER, database=DATABASE_NAME, password=PASSWORD)
 cur = conn.cursor(cursor_factory=RealDictCursor)
-cur.execute('select * from {table} LIMIT 1;'.format(table=TABLE_NAME))
 
 # Fetch a dictionary with the database configurations
-CAMERA_SETTINGS = cur.fetchone()
+CAMERA_SETTINGS = json.load(open('databaseConfig/config.json'))
 
 databaseChannel = PSQLDatabaseSetup(
     connection=conn,
@@ -58,7 +73,7 @@ for n in camera_positions:
     ports = port_generator.produce_ports()
     cur.execute(
         "INSERT INTO port_map VALUES "
-        "({camera_number},{socket_server_port},{web_socket_server_port},'{stream_secret}','{ip_address}');".format(
+        "('{stream_secret}',{camera_number},{socket_server_port},{web_socket_server_port},'{ip_address}');".format(
             camera_number=n,
             socket_server_port=ports[0],
             web_socket_server_port=ports[1],
@@ -66,6 +81,14 @@ for n in camera_positions:
             ip_address=CURRENT_IP
         )
     )
+
+    CAMERA_SETTINGS['stream_key'] = stream_secret
+    conn.commit()
+    key_values = ",".join(CAMERA_SETTINGS.keys())
+    cur.execute('insert into config ({keys}) VALUES ({values})'.format(
+        values=create_value_string(CAMERA_SETTINGS.values()),
+        keys=key_values
+    ))
     conn.commit()
     subprocess.check_call(
         ['./initiate_screen.sh', stream_secret, stream_secret, str(ports[0]), 'security', str(ports[1]), stream_secret])
@@ -101,7 +124,3 @@ for cam in camera_objects:
 
 
 main_cam.initialise_camera()
-
-
-
-

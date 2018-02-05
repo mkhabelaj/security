@@ -1,14 +1,13 @@
+DROP TABLE IF EXISTS config;
 DROP TABLE IF EXISTS port_map;
 
 CREATE TABLE IF NOT EXISTS port_map(
+  stream_secret VARCHAR(255) NOT NULL PRIMARY KEY,
   camera_number INTEGER NOT NULL,
   socket_server_port INTEGER NOT NULL ,
   websocket_server_port INTEGER NOT NULL ,
-  stream_secret VARCHAR(255) NOT NULL,
   ip_address VARCHAR(255) NOT NULL DEFAULT 'localhost'
 );
-
-DROP TABLE IF EXISTS config;
 
 CREATE TABLE IF NOT EXISTS config(
     camera_name VARCHAR(255) DEFAULT 'default cam name',
@@ -25,7 +24,7 @@ CREATE TABLE IF NOT EXISTS config(
     resolution_height INTEGER NOT NULL,
     display_text_if_occupied VARCHAR(255) NOT NULL DEFAULT 'Occupied',
     display_text_if_unoccupied VARCHAR(255) NOT NULL DEFAULT 'Unoccupied',
-    stream_key VARCHAR(255) REFERENCES port_map (stream_key)
+    stream_key VARCHAR(255) REFERENCES port_map (stream_secret)
 );
 
 
