@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS config(
     camera_name VARCHAR(255) DEFAULT 'default cam name',
     show_video BOOLEAN NOT NULL DEFAULT FALSE,
     record_motion BOOLEAN NOT NULL DEFAULT FALSE,
+    capture_image BOOLEAN NOT NULL DEFAULT FALSE,
     min_upload_seconds INTEGER,
     min_motion_frames INTEGER,
     delta_thresh INTEGER,

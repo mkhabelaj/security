@@ -26,6 +26,12 @@ def create_value_string(list_item):
 def wrap_with_quotes(x):
     return "'%s'" % x
 
+
+def ensure_dir(file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
 DATABASE_NAME = 'cam_config'
 TABLE_NAME = 'config'
 PASSWORD = 'password'
@@ -48,6 +54,8 @@ cur = conn.cursor(cursor_factory=RealDictCursor)
 
 # Fetch a dictionary with the database configurations
 CAMERA_SETTINGS = json.load(open('databaseConfig/config.json'))
+
+record_path = "/home/jackson/Documents/security/"
 
 databaseChannel = PSQLDatabaseSetup(
     connection=conn,
@@ -93,6 +101,12 @@ for n in camera_positions:
     subprocess.check_call(
         ['./initiate_screen.sh', stream_secret, stream_secret, str(ports[0]), 'security', str(ports[1]), stream_secret])
     time.sleep(5)
+
+    # create video/image storage
+    media_storage_path = record_path + stream_secret + '/'
+    print(media_storage_path)
+    ensure_dir(media_storage_path)
+
     # create camera object for each camera
     camera = CustomCamera(
         camera_number=n,
@@ -100,6 +114,7 @@ for n in camera_positions:
         web_socket_port=ports[1],
         stream_secret=stream_secret,
         initialize_stream=True,
+        record_path=media_storage_path,
         **CAMERA_SETTINGS
     )
     camera_objects.append(camera)

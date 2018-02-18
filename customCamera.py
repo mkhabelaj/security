@@ -41,5 +41,6 @@ class CustomCamera(Camera, Subscriber):
             self.display_text_if_occupied = data.get('display_text_if_occupied')
             self.display_text_if_unoccupied = data.get('display_text_if_unoccupied')
             self.resolution_width = data.get('resolution_width')
+            self.capture_image = data.get('capture_image')
             # self.resolution_height = data.get('resolution_height')
             # self.set_camera_resolution(self.resolution_width, self.resolution_height)
